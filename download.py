@@ -235,7 +235,7 @@ def representative():
         '>', efetch_urls
     ], shell=True)
 
-    tmpfile = subprocess.check_output(['mktemp'])
+    tmpfile = subprocess.check_output(['mktemp']).strip()
 
     with open(efetch_urls, 'r') as handle:
         for line in handle:
