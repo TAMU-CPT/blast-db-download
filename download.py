@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import sys
 import time
 import glob
 import datetime
@@ -235,28 +236,30 @@ def representative():
         '>', efetch_urls
     ], shell=True)
 
+    merged_fa = os.path.join(rep_dir, 'merged.fa')
+
     tmpfile = subprocess.check_output(['mktemp']).strip()
 
-    with open(efetch_urls, 'r') as handle:
-        for line in handle:
-            # URL from file
-            url = line.strip()
-            # Get genome ID: This could remove the step above but ...meh
-            gid = url[url.rindex('=') + 1:]
+    if not os.path.exists(merged_fa):
+        with open(efetch_urls, 'r') as handle:
+            for line in handle:
+                # URL from file
+                url = line.strip()
+                # Get genome ID: This could remove the step above but ...meh
+                gid = url[url.rindex('=') + 1:]
 
-            # IF ONLY THEY PROVIDED AN E-TAG WE WOULDN'T HAVE TO FRIGGING DO THIS.
-            timedCommand(classname, 'wget.' + gid , 'Download ' + gid, 'does_not_exist', [
-                'curl',
-                '--silent',
-                '"%s"' % url,
-                '>>',
-                tmpfile
-            ], shell=True)
+                # IF ONLY THEY PROVIDED AN E-TAG WE WOULDN'T HAVE TO FRIGGING DO THIS.
+                timedCommand(classname, 'wget.' + gid , 'Download ' + gid, 'does_not_exist', [
+                    'curl',
+                    '--silent',
+                    '"%s"' % url,
+                    '>>',
+                    tmpfile
+                ], shell=True)
 
-            # Sleep to not piss NCBI off since they're touchy about this stuff. Grumbles.
-            time.sleep(random.randint(1, 20))
+                # Sleep to not piss NCBI off since they're touchy about this stuff. Grumbles.
+                time.sleep(random.randint(1, 20))
 
-    merged_fa = os.path.join(rep_dir, 'merged.fa')
     timedCommand(classname, 'protein_export', 'Export CDS Features', merged_fa, [
         'python',
         'feature_export.py',
@@ -276,10 +279,14 @@ def representative():
     ])
     subprocess.check_call(['rm', '-f', tmpfile])
 
-uniref('uniref50')
-uniref('uniref90')
-uniref('uniref100')
-ncbi()
-representative()
 
-print(xunit.serialize())
+if __name__ == '__main__':
+    uniref('uniref50')
+    uniref('uniref90')
+    uniref('uniref100')
+    ncbi()
+    representative()
+
+    # Write out the report
+    with open(sys.argv[1], 'w') as handle:
+        handle.write(xunit.serialize())
