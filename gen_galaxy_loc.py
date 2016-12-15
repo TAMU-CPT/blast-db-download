@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 import sys
 import glob
 
@@ -147,8 +148,12 @@ with open(NUCL_FILE, 'r+') as handle:
 
     new_file_lines = \
         first_half + [START_TAG] + \
-        ['\t'.join(x) for x in NUCL_LOC] + \
-        [END_TAG] + second_half
+        ['\t'.join(x) for x in NUCL_LOC]
+
+    if 'BUILD_URL' in os.environ:
+        new_file_lines += ['# Automated build: ' + os.environ['BUILD_URL']]
+
+    new_file_lines += [END_TAG] + second_half
     handle.seek(0)
     handle.truncate()
     handle.write('\n'.join(new_file_lines))
@@ -175,8 +180,13 @@ with open(PROT_FILE, 'r+') as handle:
 
     new_file_lines = \
         first_half + [START_TAG] + \
-        ['\t'.join(x) for x in PROT_LOC] + \
-        [END_TAG] + second_half
+        ['\t'.join(x) for x in PROT_LOC]
+
+    if 'BUILD_URL' in os.environ:
+        new_file_lines += ['# Automated build: ' + os.environ['BUILD_URL']]
+
+    new_file_lines += [END_TAG] + second_half
     handle.seek(0)
     handle.truncate()
     handle.write('\n'.join(new_file_lines))
+
