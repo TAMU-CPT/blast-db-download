@@ -117,16 +117,25 @@ def uniref(db):
     fasta_file = os.path.join(d, db) + '.fa'
     pal_file = os.path.join(d, db) + '.pal'
     classname = 'blast.uniref.%s' % db
+    gzip_tmp_file = os.path.join(d, db) + '.fasta.gz'
 
     # Download .fa
     timedCommand(classname, 'download', 'Download failed', fasta_file, [
-        'curl',
-        '--silent',
+        'wget',
         'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/uniref/{db}/{db}.fasta.gz'.format(db=db),
-        '|',
+        '-O', gzip_tmp_file,
+    ])
+
+    timedCommand(classname, 'extract', 'Extract failed', fasta_file, [
         'gzip -d',
+        gzip_tmp_file,
         '>',
         fasta_file
+    ])
+
+    timedCommand(classname, 'cleanup', 'Cleanup failed', fasta_file, [
+        'rm',
+        gzip_tmp_file,
     ])
 
     # Makeblastdb
