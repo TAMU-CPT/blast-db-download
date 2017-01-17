@@ -96,8 +96,8 @@ def timedCommand(classname, testname, errormessage, test_file, command, shell=Fa
         xunit.skip(classname, testname)
     else:
         try:
-            if not cwd:
-                cwd = SCRIPT_DIR
+            # if not cwd:
+                # cwd = SCRIPT_DIR
             with Timer() as t:
                 # If it's a shell command we automatically join things
                 # to make our timedCommand calls completely uniform
@@ -106,10 +106,9 @@ def timedCommand(classname, testname, errormessage, test_file, command, shell=Fa
                     command = ' '.join(command)
 
                 subprocess.check_call(command, shell=shell, cwd=cwd)
+            xunit.ok(classname, testname, time=t.interval)
         except subprocess.CalledProcessError as cpe:
             xunit.failure(classname, testname, errormessage, errorDetails=str(cpe), time=t.interval)
-        finally:
-            xunit.ok(classname, testname, time=t.interval)
 
 
 def uniref(db):
