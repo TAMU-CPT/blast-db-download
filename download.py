@@ -19,6 +19,7 @@ NOW = datetime.datetime.now()
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 DATESTAMP = NOW.strftime("%Y-%V")
 DATABASES = ('uniref50', 'uniref90', 'uniref100', 'nr', 'nt', 'representative')
+DOWNLOAD_ROOT = os.getcwd()
 
 
 
@@ -96,8 +97,8 @@ def timedCommand(classname, testname, errormessage, test_file, command, shell=Fa
         xunit.skip(classname, testname)
     else:
         try:
-            # if not cwd:
-                # cwd = SCRIPT_DIR
+            if not cwd:
+                cwd = DOWNLOAD_ROOT
             with Timer() as t:
                 # If it's a shell command we automatically join things
                 # to make our timedCommand calls completely uniform
