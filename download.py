@@ -136,7 +136,7 @@ def uniref(db):
         gzip_tmp_file,
         '>',
         fasta_file
-    ])
+    ], shell=True)
 
     timedCommand(classname, 'cleanup', 'Cleanup failed', 'non-existent', [
         'rm',
