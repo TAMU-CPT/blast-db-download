@@ -136,11 +136,6 @@ def uniref(db):
         gzip_tmp_file,
     ])
 
-    # timedCommand(classname, 'cleanup', 'Cleanup failed', 'non-existent', [
-        # 'rm',
-        # gzip_tmp_file,
-    # ])
-
     # Makeblastdb
     timedCommand(classname, 'build', 'Makeblastdb failed', pal_file, [
         'makeblastdb',
@@ -294,10 +289,10 @@ def representative():
 
 if __name__ == '__main__':
     uniref('uniref50')
-    # uniref('uniref90')
-    # uniref('uniref100')
-    # ncbi()
-    # representative()
+    uniref('uniref90')
+    uniref('uniref100')
+    ncbi()
+    representative()
 
     # Write out the report
     with open(sys.argv[1], 'w') as handle:
