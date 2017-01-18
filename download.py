@@ -114,7 +114,7 @@ def timedCommand(classname, testname, errormessage, test_file, command, shell=Fa
 
 def uniref(db):
     d = os.path.join(db, DATESTAMP)
-    fasta_file = os.path.join(d, db) + '.fa'
+    fasta_file = os.path.join(d, db) + '.fasta'
     pal_file = os.path.join(d, db) + '.pal'
     classname = 'blast.uniref.%s' % db
     gzip_tmp_file = os.path.join(d, db) + '.fasta.gz'
@@ -134,14 +134,12 @@ def uniref(db):
     timedCommand(classname, 'extract', 'Extract failed', fasta_file, [
         'gzip -d',
         gzip_tmp_file,
-        '>',
-        fasta_file
-    ], shell=True)
-
-    timedCommand(classname, 'cleanup', 'Cleanup failed', 'non-existent', [
-        'rm',
-        gzip_tmp_file,
     ])
+
+    # timedCommand(classname, 'cleanup', 'Cleanup failed', 'non-existent', [
+        # 'rm',
+        # gzip_tmp_file,
+    # ])
 
     # Makeblastdb
     timedCommand(classname, 'build', 'Makeblastdb failed', pal_file, [
