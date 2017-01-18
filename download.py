@@ -120,7 +120,7 @@ def uniref(db):
     gzip_tmp_file = os.path.join(d, db) + '.fasta.gz'
 
     # Download .fa
-    timedCommand(classname, 'download', 'Download failed', fasta_file, [
+    timedCommand(classname, 'download', 'Download failed', gzip_tmp_file, [
         'wget',
         'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/uniref/{db}/{db}.fasta.gz'.format(db=db),
         '-O', gzip_tmp_file,
@@ -133,7 +133,7 @@ def uniref(db):
         fasta_file
     ])
 
-    timedCommand(classname, 'cleanup', 'Cleanup failed', fasta_file, [
+    timedCommand(classname, 'cleanup', 'Cleanup failed', 'non-existent', [
         'rm',
         gzip_tmp_file,
     ])
