@@ -122,6 +122,7 @@ def uniref(db):
     # Exit early if the pal file exists. Otherwise the cleanup step removes a
     # file that will get re-downloaded for zero use.
     if os.path.exists(pal_file):
+        xunit.skip(classname, 'COMPLETE')
         return
 
     # Download .fa
