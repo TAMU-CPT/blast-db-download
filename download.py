@@ -119,6 +119,11 @@ def uniref(db):
     classname = 'blast.uniref.%s' % db
     gzip_tmp_file = os.path.join(d, db) + '.fasta.gz'
 
+    # Exit early if the pal file exists. Otherwise the cleanup step removes a
+    # file that will get re-downloaded for zero use.
+    if os.path.exists(pal_file):
+        return
+
     # Download .fa
     timedCommand(classname, 'download', 'Download failed', gzip_tmp_file, [
         'wget',
