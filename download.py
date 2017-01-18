@@ -276,7 +276,7 @@ def representative():
 
     timedCommand(classname, 'protein_export', 'Export CDS Features', merged_fa, [
         'python',
-        'feature_export.py',
+        os.path.join(SCRIPT_DIR, 'feature_export.py'),
         '--strip_stops',
         '--informative',
         '--translate',
