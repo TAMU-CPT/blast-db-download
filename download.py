@@ -55,20 +55,24 @@ class XUnitReportBuilder(object):
         self.suite_name = suite_name
 
     def ok(self, classname, test_name, time=0):
+        log.info("OK: [%s] %s", classname, test_name)
         self.xunit_data['total'] += 1
         self.__add_test(test_name, classname, errors="", time=time)
 
     def error(self, classname, test_name, errorMessage, errorDetails="", time=0):
+        log.info("ERROR: [%s] %s", classname, test_name)
         self.xunit_data['total'] += 1
         self.__add_test(test_name, classname, errors=self.ERROR_TPL.format(
             errorMessage=errorMessage, errorDetails=errorDetails, test_name=test_name), time=time)
 
     def failure(self, classname, test_name, errorMessage, errorDetails="", time=0):
+        log.info("FAIL: [%s] %s", classname, test_name)
         self.xunit_data['total'] += 1
         self.__add_test(test_name, classname, errors=self.ERROR_TPL.format(
             errorMessage=errorMessage, errorDetails=errorDetails, test_name=test_name), time=time)
 
     def skip(self, classname, test_name, time=0):
+        log.info("SKIP: [%s] %s", classname, test_name)
         self.xunit_data['skips'] += 1
         self.xunit_data['total'] += 1
         self.__add_test(test_name, classname, errors="            <skipped />", time=time)
