@@ -102,7 +102,7 @@ def timedCommand(classname, testname, errormessage, test_file, command, shell=Fa
             with Timer() as t:
                 # If it's a shell command we automatically join things
                 # to make our timedCommand calls completely uniform
-                log.info(' '.join(command))
+                log.info('cd %s && ' % cwd + ' '.join(command))
                 if shell:
                     command = ' '.join(command)
 
