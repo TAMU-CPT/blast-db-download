@@ -137,7 +137,7 @@ def uniref(db):
     ])
 
     timedCommand(classname, 'extract', 'Extract failed', fasta_file, [
-        'gzip -d',
+        'gzip', '-d',
         gzip_tmp_file,
     ])
 
