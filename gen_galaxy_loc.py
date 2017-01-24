@@ -87,7 +87,7 @@ for db in PROT_DBS:
             PROT_LOC.append([
                 '%s_%s.%s' % (index_name, year, week),
                 '%s%s %s-%s' % (permanence, title, year, week + 1),
-                '/media/nfs-backup/blast/%s/%s-%s/%s' % (dir_name, year, week, index_name)
+                '/media/nfs-backup/blast/%s/%s-%02d/%s' % (dir_name, year, week, index_name)
             ])
 
 for db in NUCL_DBS:
@@ -120,7 +120,7 @@ for db in NUCL_DBS:
             NUCL_LOC.append([
                 '%s_%s.%s' % (index_name, year, week),
                 '%s%s %s-%s' % (permanence, title, year, week + 1),
-                '/media/nfs-backup/blast/%s/%s-%s/%s' % (dir_name, year, month, index_name)
+                '/media/nfs-backup/blast/%s/%s-%02d/%s' % (dir_name, year, week, index_name)
             ])
 
 NUCL_FILE = sys.argv[1]
