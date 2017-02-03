@@ -110,7 +110,7 @@ def timedCommand(classname, testname, errormessage, test_file, command, shell=Fa
 
 def interpro():
     classname = 'interpro'
-    tarball = 'interproscan-%s-64-bit.tar.gz' % VERSION
+    tarball = os.path.join(VERSION, 'interproscan-%s-64-bit.tar.gz' % VERSION)
     md5sum = tarball + '.md5'
     base_url = 'ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/%s/' % VERSION
 
