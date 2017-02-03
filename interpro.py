@@ -126,7 +126,7 @@ def interpro():
     ])
 
     timedCommand(classname, 'contents.extract', 'Failed to extract', 'none', [
-        'tar', '-xvfz', tarball
+        'tar', 'xvfz', tarball
     ])
 
 if __name__ == '__main__':
