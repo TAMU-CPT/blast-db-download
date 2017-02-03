@@ -83,11 +83,6 @@ class XUnitReportBuilder(object):
 xunit = XUnitReportBuilder('interpro_installer')
 
 
-subprocess.check_call([
-    'mkdir', '-p',
-    VERSION
-])
-
 def timedCommand(classname, testname, errormessage, test_file, command, shell=False, cwd=None):
     if os.path.exists(test_file):
         xunit.skip(classname, testname)
@@ -110,7 +105,7 @@ def timedCommand(classname, testname, errormessage, test_file, command, shell=Fa
 
 def interpro():
     classname = 'interpro'
-    tarball = os.path.join(VERSION, 'interproscan-%s-64-bit.tar.gz' % VERSION)
+    tarball = 'interproscan-%s-64-bit.tar.gz' % VERSION
     md5sum = tarball + '.md5'
     base_url = 'ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/%s/' % VERSION
 
@@ -126,8 +121,12 @@ def interpro():
         '-O', md5sum,
     ])
 
-    timedCommand(classname, 'md5sum', 'MD5SUM failed to validate', 'none', [
+    timedCommand(classname, 'contents.verify', 'MD5SUM failed to validate', 'none', [
         'md5sum', '-c', md5sum
+    ])
+
+    timedCommand(classname, 'contents.extract', 'Failed to extract', 'none', [
+        'tar', '-xvfz', tarball
     ])
 
 if __name__ == '__main__':
