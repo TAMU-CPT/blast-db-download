@@ -13,6 +13,7 @@ NOW = datetime.datetime.now()
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 DOWNLOAD_ROOT = os.getcwd()
 VERSION = '5.22-61.0'
+PANTHER_VERSION = '11.1'
 
 
 class Timer:
@@ -105,7 +106,14 @@ def timedCommand(classname, testname, errormessage, test_file, command, shell=Fa
 
 def interpro():
     classname = 'interpro'
+    extracted_dir = os.path.join(DOWNLOAD_ROOT, 'interproscan-' + VERSION)
+    data_dir = os.path.join(extracted_dir, 'data')
     tarball = 'interproscan-%s-64-bit.tar.gz' % VERSION
+
+    panther_tarball = 'panther-data-%s.tar.gz' % PANTHER_VERSION
+    panther_tarball_md5 = panther_tarball + '.md5'
+    base_data_url = 'ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/data/'
+    # wget
     md5sum = tarball + '.md5'
     base_url = 'ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/%s/' % VERSION
 
@@ -121,12 +129,32 @@ def interpro():
         '-O', md5sum,
     ])
 
-    timedCommand(classname, 'contents.verify', 'MD5SUM failed to validate', 'none', [
+    timedCommand(classname, 'contents.verify', 'MD5SUM failed to validate', os.path.join(extracted_dir, 'interproscan.sh'), [
         'md5sum', '-c', md5sum
     ])
 
-    timedCommand(classname, 'contents.extract', 'Failed to extract', 'none', [
+    timedCommand(classname, 'contents.extract', 'Failed to extract', os.path.join(extracted_dir, 'interproscan.sh'), [
         'tar', 'xvfz', tarball
+    ])
+
+    timedCommand(classname, 'setup.phobius', 'Failed to install phobius', os.path.join(extracted_dir, 'bin', 'phobius', '1.01', 'phobius.pl'), [
+        'tar', 'xvfz', os.path.join(os.path.pardir, 'phobius.tgz')
+    ], cwd=extracted_dir)
+
+    timedCommand(classname, 'setup.signalp', 'Failed to install signalp', os.path.join(extracted_dir, 'bin', 'signalp', '4.1', 'signalp'), [
+        'tar', 'xvfz', os.path.join(os.path.pardir, 'signalp.tgz')
+    ], cwd=extracted_dir)
+
+    timedCommand(classname, 'download.tarball', 'Download failed', os.path.join(extracted_dir, 'data', panther_tarball), [
+        'wget',
+        base_data_url + panther_tarball,
+        '-O', os.path.join(extracted_dir, 'data', panther_tarball),
+    ])
+
+    timedCommand(classname, 'download.md5sum', 'Download failed', os.path.join(extracted_dir, 'data', panther_tarball_md5), [
+        'wget',
+        base_data_url + panther_tarball_md5,
+        '-O', os.path.join(extracted_dir, 'data', panther_tarball_md5),
     ])
 
 if __name__ == '__main__':
