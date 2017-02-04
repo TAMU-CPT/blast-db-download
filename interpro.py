@@ -102,6 +102,7 @@ def timedCommand(classname, testname, errormessage, test_file, command, shell=Fa
             xunit.ok(classname, testname, time=t.interval)
         except subprocess.CalledProcessError as cpe:
             xunit.failure(classname, testname, errormessage, errorDetails=str(cpe), time=t.interval)
+            raise Exception("Cannot continute")
 
 
 def interpro():
@@ -158,16 +159,19 @@ def interpro():
     ])
 
     timedCommand(classname, 'panther.verify', 'MD5SUM failed to validate', os.path.join(extracted_dir, 'data', 'panther'), [
-        'md5sum', '-c', os.path.join(extracted_dir, 'data', panther_tarball_md5)
-    ])
+        'md5sum', '-c', panther_tarball_md5
+    ], cwd=data_dir)
 
     timedCommand(classname, 'panther.extract', 'Failed to extract', os.path.join(extracted_dir, 'data', 'panther'), [
         'tar', 'xvfz', panther_tarball
     ], cwd=data_dir)
 
 if __name__ == '__main__':
-    interpro()
-
-    # Write out the report
-    with open(sys.argv[1], 'w') as handle:
-        handle.write(xunit.serialize())
+    try:
+        interpro()
+    except Exception:
+        pass
+    finally:
+        # Write out the report
+        with open(sys.argv[1], 'w') as handle:
+            handle.write(xunit.serialize())
