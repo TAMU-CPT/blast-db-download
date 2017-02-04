@@ -145,17 +145,25 @@ def interpro():
         'tar', 'xvfz', os.path.join(os.path.pardir, 'signalp.tgz')
     ], cwd=extracted_dir)
 
-    timedCommand(classname, 'download.tarball', 'Download failed', os.path.join(extracted_dir, 'data', panther_tarball), [
+    timedCommand(classname, 'panther.download_tarball', 'Download failed', os.path.join(extracted_dir, 'data', panther_tarball), [
         'wget',
         base_data_url + panther_tarball,
         '-O', os.path.join(extracted_dir, 'data', panther_tarball),
     ])
 
-    timedCommand(classname, 'download.md5sum', 'Download failed', os.path.join(extracted_dir, 'data', panther_tarball_md5), [
+    timedCommand(classname, 'panther.download_md5sum', 'Download failed', os.path.join(extracted_dir, 'data', panther_tarball_md5), [
         'wget',
         base_data_url + panther_tarball_md5,
         '-O', os.path.join(extracted_dir, 'data', panther_tarball_md5),
     ])
+
+    timedCommand(classname, 'panther.verify', 'MD5SUM failed to validate', os.path.join(extracted_dir, 'data', 'panther'), [
+        'md5sum', '-c', os.path.join(extracted_dir, 'data', panther_tarball_md5)
+    ])
+
+    timedCommand(classname, 'panther.extract', 'Failed to extract', os.path.join(extracted_dir, 'data', 'panther'), [
+        'tar', 'xvfz', panther_tarball
+    ], cwd=data_dir)
 
 if __name__ == '__main__':
     interpro()
