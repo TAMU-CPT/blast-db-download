@@ -296,7 +296,7 @@ def representative():
 def canonical_phages():
     rep_dir = os.path.join('canonical', DATESTAMP)
     with open(os.path.join(SCRIPT_DIR, 'canonical_phages.list'), 'r') as handle:
-        canonical_ids = handle.read().split('\n')
+        canonical_ids = handle.read().strip().split('\n')
     classname = 'canonical_phage_db'
 
     # Get a tempdir for downloading our data to
