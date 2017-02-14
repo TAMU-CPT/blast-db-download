@@ -292,12 +292,75 @@ def representative():
     subprocess.check_call(['rm', '-f', tmpfile])
 
 
+def canonical_phages():
+    rep_dir = os.path.join('canonical', DATESTAMP)
+    with open(os.path.join(SCRIPT_DIR, 'canonical_phages.list'), 'r') as handle:
+        canonical_ids = handle.read().split('\n')
+    classname = 'canonical_phage_db'
+
+    # Get a tempdir for downloading our data to
+    tmpdir = subprocess.check_output(['mktemp', '-d']).strip()
+
+    # Download individual genomes as fasta format (nucleotide)
+    for ncbi_id in canonical_ids:
+        tmpout = os.path.join(tmpdir, ncbi_id + '.fa')
+        timedCommand(classname, 'download.%s' % ncbi_id, 'Downloading %s Failed' % ncbi_id, tmpout, [
+            os.path.join(SCRIPT_DIR, 'edirect', 'efetch'),
+            ncbi_id,
+            '-format', 'fasta'
+            '>', tmpout
+        ], shell=True)
+        time.sleep(random.randint(1, 20))
+
+        # And then download as protein fasta.
+        tmpout = os.path.join(tmpdir, ncbi_id + '.pfa')
+        timedCommand(classname, 'download.%s' % ncbi_id, 'Downloading %s Failed' % ncbi_id, tmpout, [
+            os.path.join(SCRIPT_DIR, 'edirect', 'efetch'),
+            ncbi_id,
+            '-format', 'fasta_cds_aa'
+            '>', tmpout
+        ], shell=True)
+        time.sleep(random.randint(1, 20))
+
+    # Concatenate all PFA + FA files to their respective merged versions
+    merged_nucl = os.path.join(tmpdir, 'merged.fa')
+    merged_prot = os.path.join(tmpdir, 'merged.pfa')
+
+    timedCommand(classname, 'merge.nucl', 'Merging Failed', merged_nucl, [
+        'cat', os.path.join(tmpdir, '*.fa'),
+        '>', merged_nucl
+    ], shell=True)
+
+    timedCommand(classname, 'merge.prot', 'Merging Failed', merged_prot, [
+        'cat', os.path.join(tmpdir, '*.pfa'),
+        '>', merged_prot
+    ], shell=True)
+
+    # Now with both of those downloaded, build Prot + Nucl databases.
+    db_name_prot = os.path.join(rep_dir, 'canonical_prot') # + .pin
+    db_name_nucl = os.path.join(rep_dir, 'canonical_nucl') # + .nin
+    timedCommand(classname, 'makeblastdb', 'Build Nucleotide BLAST Database', db_name_nucl + '.nin', [
+        'makeblastdb',
+        '-in', merged_nucl,
+        '-dbtype', 'nucl',
+        '-out', db_name_nucl,
+    ])
+
+    timedCommand(classname, 'makeblastdb', 'Build Protein BLAST Database', db_name_prot + '.pin', [
+        'makeblastdb',
+        '-in', merged_prot,
+        '-dbtype', 'prot',
+        '-out', db_name_prot,
+    ])
+
 if __name__ == '__main__':
-    uniref('uniref50')
-    uniref('uniref90')
-    uniref('uniref100')
-    ncbi()
-    representative()
+    # uniref('uniref50')
+    # uniref('uniref90')
+    # uniref('uniref100')
+    # ncbi()
+    # representative()
+    canonical_phages()
+
 
     # Write out the report
     with open(sys.argv[1], 'w') as handle:

@@ -1,0 +1,22 @@
+=head2 Tue Feb 14 17:32:50 2017: C<Module> L<Mozilla::CA|Mozilla::CA>
+
+=over 4
+
+=item *
+
+C<installed into: /home/hxr/work/blast-db-download/edirect/aux/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 20160104>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
