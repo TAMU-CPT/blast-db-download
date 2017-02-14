@@ -307,7 +307,7 @@ def canonical_phages():
         tmpout = os.path.join(tmpdir, ncbi_id + '.fa')
         timedCommand(classname, 'download.%s' % ncbi_id, 'Downloading %s Failed' % ncbi_id, tmpout, [
             os.path.join(SCRIPT_DIR, 'edirect', 'efetch'),
-            ncbi_id,
+            '-id', ncbi_id,
             '-format', 'fasta'
             '>', tmpout
         ], shell=True)
@@ -317,7 +317,7 @@ def canonical_phages():
         tmpout = os.path.join(tmpdir, ncbi_id + '.pfa')
         timedCommand(classname, 'download.%s' % ncbi_id, 'Downloading %s Failed' % ncbi_id, tmpout, [
             os.path.join(SCRIPT_DIR, 'edirect', 'efetch'),
-            ncbi_id,
+            '-id', ncbi_id,
             '-format', 'fasta_cds_aa'
             '>', tmpout
         ], shell=True)
