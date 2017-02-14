@@ -40,12 +40,13 @@ class XUnitReportBuilder(object):
     </testsuite>
     """
 
-    TESTCASE_TPL = """        <testcase classname="{classname}" name="{name}" {time}>
+    TESTCASE_TPL = """        <testcase classname="{classname}" name="{name}" {time}><![CDATA[
 {error}
-        </testcase>"""
+        ]]></testcase>"""
 
-    ERROR_TPL = """            <error type="{test_name}" message="{errorMessage}">{errorDetails}
-            </error>"""
+    ERROR_TPL = """            <error type="{test_name}" message="{errorMessage}"><![CDATA[
+{errorDetails}
+            ]]></error>"""
 
     def __init__(self, suite_name):
         self.xunit_data = {
