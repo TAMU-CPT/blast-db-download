@@ -299,12 +299,9 @@ def canonical_phages():
         canonical_ids = handle.read().strip().split('\n')
     classname = 'canonical_phage_db'
 
-    # Get a tempdir for downloading our data to
-    tmpdir = subprocess.check_output(['mktemp', '-d']).strip()
-
     # Download individual genomes as fasta format (nucleotide)
     for ncbi_id in canonical_ids:
-        tmpout = os.path.join(tmpdir, ncbi_id + '.fa')
+        tmpout = os.path.join(rep_dir, ncbi_id + '.fa')
         timedCommand(classname, 'download.%s' % ncbi_id, 'Downloading %s Failed' % ncbi_id, tmpout, [
             os.path.join(SCRIPT_DIR, 'edirect', 'efetch'),
             '-db', 'nuccore',
@@ -315,7 +312,7 @@ def canonical_phages():
         time.sleep(random.randint(1, 20))
 
         # And then download as protein fasta.
-        tmpout = os.path.join(tmpdir, ncbi_id + '.pfa')
+        tmpout = os.path.join(rep_dir, ncbi_id + '.pfa')
         timedCommand(classname, 'download.%s' % ncbi_id, 'Downloading %s Failed' % ncbi_id, tmpout, [
             os.path.join(SCRIPT_DIR, 'edirect', 'efetch'),
             '-db', 'nuccore',
@@ -326,16 +323,16 @@ def canonical_phages():
         time.sleep(random.randint(1, 20))
 
     # Concatenate all PFA + FA files to their respective merged versions
-    merged_nucl = os.path.join(tmpdir, 'merged.fa')
-    merged_prot = os.path.join(tmpdir, 'merged.pfa')
+    merged_nucl = os.path.join(rep_dir, 'merged.fa')
+    merged_prot = os.path.join(rep_dir, 'merged.pfa')
 
     timedCommand(classname, 'merge.nucl', 'Merging Failed', merged_nucl, [
-        'cat', os.path.join(tmpdir, '*.fa'),
+        'cat', os.path.join(rep_dir, '*.fa'),
         '>', merged_nucl
     ], shell=True)
 
     timedCommand(classname, 'merge.prot', 'Merging Failed', merged_prot, [
-        'cat', os.path.join(tmpdir, '*.pfa'),
+        'cat', os.path.join(rep_dir, '*.pfa'),
         '>', merged_prot
     ], shell=True)
 
