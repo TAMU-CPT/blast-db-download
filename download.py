@@ -357,11 +357,11 @@ def canonical_phages():
     ])
 
 if __name__ == '__main__':
-    # uniref('uniref50')
-    # uniref('uniref90')
-    # uniref('uniref100')
-    # ncbi()
-    # representative()
+    uniref('uniref50')
+    uniref('uniref90')
+    uniref('uniref100')
+    ncbi()
+    representative()
     canonical_phages()
 
 
