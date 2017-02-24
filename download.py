@@ -132,7 +132,7 @@ def uniref(db):
 
     # Download .fa
     timedCommand(classname, 'download', 'Download failed', gzip_tmp_file, [
-        'wget',
+        'wget', '--progress=dot:giga',
         'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/uniref/{db}/{db}.fasta.gz'.format(db=db),
         '-O', gzip_tmp_file,
     ])
@@ -176,7 +176,7 @@ def ncbi():
     ], shell=True)
 
     timedCommand('ncbi.nt', 'download', 'Tarball Download Failed', os.path.join(nt_dir, 'nt.00.tar.gz'), [
-        'wget',
+        'wget', '--progress=dot:giga',
         '--no-clobber',
         '--continue',
         '--input-file=nt.urls',
@@ -203,7 +203,7 @@ def ncbi():
     ], shell=True)
 
     timedCommand('ncbi.nr', 'download', 'Tarball Download Failed', os.path.join(nr_dir, 'nr.00.tar.gz'), [
-        'wget',
+        'wget', '--progress=dot:giga',
         '--no-clobber',
         '--continue',
         '--input-file=nr.urls',
@@ -227,7 +227,7 @@ def representative():
     urls_tsv = os.path.join(rep_dir, 'urls.tsv')
     classname = 'ncbi.representative_bacteria'
     timedCommand(classname, 'urls.tsv', 'Download URLs', urls_tsv, [
-        'wget',
+        'wget', '--progress=dot:giga',
         quote('http://www.ncbi.nlm.nih.gov/genomes/Genome2BE/genome2srv.cgi?action=refgenomes&download=on&type=reference'),
         '-O',
         urls_tsv
