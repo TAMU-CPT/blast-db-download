@@ -221,6 +221,9 @@ def ncbi():
 
 def representative():
     rep_dir = os.path.join('representative', DATESTAMP)
+    if not os.path.exists(rep_dir):
+        os.makedirs(rep_dir)
+
     urls_tsv = os.path.join(rep_dir, 'urls.tsv')
     classname = 'ncbi.representative_bacteria'
     timedCommand(classname, 'urls.tsv', 'Download URLs', urls_tsv, [
