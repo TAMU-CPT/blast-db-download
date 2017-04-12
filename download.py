@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import re
 import os
 import sys
 import time
@@ -301,12 +302,20 @@ def canonical_phages():
     if not os.path.exists(rep_dir):
         os.makedirs(rep_dir)
 
+    canonical_ids = []
     with open(os.path.join(SCRIPT_DIR, 'canonical_phages.list'), 'r') as handle:
-        canonical_ids = handle.read().strip().split('\n')
+        for line in handle:
+            line = line.strip()
+            (uid, name) = line.split('\t')
+            # Replace spaces with underscores
+            name = re.sub('\s+', '_', name)
+            # And strip unsafe
+            name = re.sub('[^A-Za-z0-9_-]', '', name)
+            canonical_ids.append((uid, name))
     classname = 'canonical_phage_db'
 
     # Download individual genomes as fasta format (nucleotide)
-    for ncbi_id in canonical_ids:
+    for ncbi_id, ncbi_name in canonical_ids:
         tmpout = os.path.join(rep_dir, ncbi_id + '.fa')
         timedCommand(classname, 'download.%s' % ncbi_id, 'Downloading %s Failed' % ncbi_id, tmpout, [
             os.path.join(SCRIPT_DIR, 'edirect', 'efetch'),
@@ -317,6 +326,12 @@ def canonical_phages():
         ], shell=True)
         time.sleep(random.randint(1, 20))
 
+        timedCommand(classname, 'sed.%s' % ncbi_id, 'Name Correction %s Failed' % ncbi_id, 'does-not-exist', [
+            'sed', '-i',
+            's/%s/%s/g' % (ncbi_id, ncbi_name),
+            tmpout
+        ], shell=True)
+
         # And then download as protein fasta.
         tmpout = os.path.join(rep_dir, ncbi_id + '.pfa')
         timedCommand(classname, 'download.%s' % ncbi_id, 'Downloading %s Failed' % ncbi_id, tmpout, [
@@ -325,6 +340,12 @@ def canonical_phages():
             '-id', ncbi_id,
             '-format', 'fasta_cds_aa'
             '>', tmpout
+        ], shell=True)
+
+        timedCommand(classname, 'sed.%s' % ncbi_id, 'Name Correction %s Failed' % ncbi_id, 'does-not-exist', [
+            'sed', '-i',
+            's/%s/%s/g' % (ncbi_id, ncbi_name),
+            tmpout
         ], shell=True)
         time.sleep(random.randint(1, 20))
 
@@ -361,10 +382,10 @@ def canonical_phages():
 
 if __name__ == '__main__':
     # uniref('uniref50')
-    uniref('uniref90')
+    # uniref('uniref90')
     # uniref('uniref100')
-    ncbi()
-    representative()
+    # ncbi()
+    # representative()
     canonical_phages()
 
 
