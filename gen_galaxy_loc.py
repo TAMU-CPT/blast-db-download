@@ -47,6 +47,8 @@ PROT_DBS = [
     ['phage', 'canonical_phages', 'Canonical Phages'],
     ['representative', 'representative', 'NCBI Representative Bacteria'],
     ['bact', 'bact', 'NCBI All Bacteria'],
+    ['sprot', 'sprot', 'Uniprot Swiss-Prot'],
+    ['trembl', 'trembl', 'Uniprot TrEMBL'],
 ]
 
 NUCL_DBS = [

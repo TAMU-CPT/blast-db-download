@@ -19,7 +19,7 @@ log = logging.getLogger('dl')
 NOW = datetime.datetime.now()
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 DATESTAMP = NOW.strftime("%Y-%V")
-DATABASES = ('uniref50', 'uniref90', 'uniref100', 'nr', 'nt', 'representative')
+DATABASES = ('uniref50', 'uniref90', 'uniref100', 'nr', 'nt', 'representative', 'trembl', 'sprot')
 DOWNLOAD_ROOT = os.getcwd()
 
 
@@ -380,14 +380,49 @@ def canonical_phages():
         '-out', db_name_prot,
     ])
 
+def uniprot(db):
+    # db must be trembl or sprot
+    d = os.path.join(db, DATESTAMP)
+    fasta_file = os.path.join(d, db) + '.fasta'
+    pal_file = os.path.join(d, db) + '.pal'
+    classname = 'blast.uniprot.%s' % db
+    gzip_tmp_file = os.path.join(d, db) + '.fasta.gz'
+
+    # Exit early if the pal file exists. Otherwise the cleanup step removes a
+    # file that will get re-downloaded for zero use.
+    if os.path.exists(pal_file):
+        xunit.skip(classname, 'COMPLETE')
+        return
+
+    # Download .fa
+    timedCommand(classname, 'download', 'Download failed', gzip_tmp_file, [
+        'wget', '--progress=dot:giga',
+        'ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_{db}.fasta.gz'.format(db=db),
+        '-O', gzip_tmp_file,
+    ])
+
+    timedCommand(classname, 'extract', 'Extract failed', fasta_file, [
+        'gzip', '-d',
+        gzip_tmp_file,
+    ])
+
+    # Makeblastdb
+    timedCommand(classname, 'build', 'Makeblastdb failed', pal_file, [
+        'makeblastdb',
+        '-in', fasta_file,
+        '-dbtype', 'prot',
+        '-out', os.path.join(d, db)
+    ])
+
 if __name__ == '__main__':
     # uniref('uniref50')
     # uniref('uniref90')
     # uniref('uniref100')
     # ncbi()
     # representative()
-    canonical_phages()
-
+    # canonical_phages()
+    uniprot('sprot')
+    uniprot('trembl')
 
     # Write out the report
     with open(sys.argv[1], 'w') as handle:
