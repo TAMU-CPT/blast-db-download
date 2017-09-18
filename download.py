@@ -422,7 +422,7 @@ if __name__ == '__main__':
     # representative()
     # canonical_phages()
     uniprot('sprot')
-    uniprot('trembl')
+    # uniprot('trembl')
 
     # Write out the report
     with open(sys.argv[1], 'w') as handle:
